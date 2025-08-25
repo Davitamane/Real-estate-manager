@@ -1,5 +1,16 @@
+
 @import "tailwindcss";
 
+@theme {
+  --color-main: #f93b1d;
+  --color-background: #f8f3fe;
+  --color-outline: #ddd2ff;
+}
+
 body {
-  font-family: "FiraGO", sans-serif;
+  font-family: "Firago", sans-serif;
+  /* margin: 2rem 5rem 4rem 5rem; */
+}
+button {
+  cursor: pointer;
 }

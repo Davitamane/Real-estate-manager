@@ -1,9 +1,31 @@
-import { useState } from "react";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import AppLayout from "./UI/AppLayout";
+import MainPage from "./Pages/MainPage";
+import MainPageProvider from "./contexts/MainPageContext";
+import AddListing from "./Pages/AddListing";
+import ListingPage from "./Pages/ListingPage";
 
 function App() {
-  const [count, setCount] = useState(0);
-  const x = 0;
-  return <div className="bg-amber-400">test</div>;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route element={<AppLayout />}>
+          <Route index element={<Navigate replace to="mainPage" />} />
+
+          <Route
+            path="mainPage"
+            element={
+              <MainPageProvider>
+                <MainPage />
+              </MainPageProvider>
+            }
+          />
+          <Route path="AddListing" element={<AddListing />} />
+          <Route path="ListingPage" element={<ListingPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;
