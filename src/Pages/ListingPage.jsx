@@ -6,8 +6,36 @@ import { BiSolidArea } from "react-icons/bi";
 import { BsFillSignpostFill } from "react-icons/bs";
 import { CiMail } from "react-icons/ci";
 import { MdOutlinePhoneInTalk } from "react-icons/md";
+import { useState } from "react";
+import Card from "../MainPage/Card";
+
+const tasks = [
+  "Task 1",
+  "Task 2",
+  "Task 3",
+  "Task 4",
+  "Task 5",
+  "Task 6",
+  "Task 7",
+];
 
 function ListingPage() {
+  const [index, setIndex] = useState(0);
+
+  const visibleCount = 4;
+
+  const next = () => {
+    if (index + visibleCount < tasks.length) {
+      setIndex(index + 1);
+    }
+  };
+
+  const prev = () => {
+    if (index > 0) {
+      setIndex(index - 1);
+    }
+  };
+
   return (
     <div className="p-20 w-full">
       <div className="flex w-full gap-16">
@@ -71,8 +99,40 @@ function ListingPage() {
               </div>
             </div>
           </div>
-          <button className="px-4 py-2 mt-3 border-gray-500 rounded-lg border w-fit text-xs">ლისტინგის წაშლა</button>
+          <button className="px-4 py-2 mt-3 border-gray-500 rounded-lg border w-fit text-xs">
+            ლისტინგის წაშლა
+          </button>
         </div>
+      </div>
+      <div className="bg-green-400">
+        <button onClick={prev} disabled={index === 0}>
+          {"<"}
+        </button>
+
+        <div
+          // style={{ display: "flex", overflow: "hidden", width: "800px" }}
+          className="flex overflow-hidden"
+        >
+          <div
+            style={{
+              display: "flex",
+              transform: `translateX(-${index * 400}px)`,
+              transition: "transform 0.3s ease",
+            }}
+            // className="flex transition-all"
+          >
+            <Card />
+            <Card />
+            <Card />
+            <Card />
+            <Card />
+            <Card />
+          </div>
+        </div>
+
+        <button onClick={next} disabled={index + visibleCount >= tasks.length}>
+          {">"}
+        </button>
       </div>
     </div>
   );
