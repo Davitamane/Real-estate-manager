@@ -104,14 +104,14 @@ function ListingPage() {
           </button>
         </div>
       </div>
-      <div className="bg-green-400">
+      <div>
         <button onClick={prev} disabled={index === 0}>
           {"<"}
         </button>
 
         <div
-          // style={{ display: "flex", overflow: "hidden", width: "800px" }}
-          className="flex overflow-hidden"
+          // style={{ display: "flex", overflow: "hidden", width: "ma" }}
+          className="flex overflow-hidden w-fit"
         >
           <div
             style={{
