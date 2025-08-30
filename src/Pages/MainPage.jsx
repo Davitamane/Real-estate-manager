@@ -7,9 +7,11 @@ import { FaPlus } from "react-icons/fa6";
 import FilterDisplayContainer from "../MainPage/FilterDisplayContainer";
 import { Link } from "react-router-dom";
 import ListContainer from "../MainPage/ListContainer";
+import { ModalContext } from "../contexts/ModalContext";
 
 function MainPage() {
   const { open, setOpen } = useContext(MainPageContext);
+  const { setIsModalOpen } = useContext(ModalContext);
 
   return (
     <div className="px-20 pt-10">
@@ -20,7 +22,7 @@ function MainPage() {
           <Link to="/AddListing">
             <Button>ლისტინგის დამატება</Button>
           </Link>
-          <Button styleType="secondary">
+          <Button styleType="secondary" onClick={() => setIsModalOpen(true)}>
             <FaPlus />
             აგენტის დამატება
           </Button>

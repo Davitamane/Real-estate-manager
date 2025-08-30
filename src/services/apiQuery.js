@@ -10,3 +10,4 @@ async function fetchData(link) {
 
 export const getCities = () => fetchData("/cities");
 export const getRegions = () => fetchData("/regions");
+export const getAgents = () => fetchData("/agents")
