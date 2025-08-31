@@ -10,7 +10,6 @@ import { useForm } from "react-hook-form";
 
 function Modal() {
   const { isModalOpen, setIsModalOpen } = useContext(ModalContext);
-  // const [image, setImage] = useState(null);
 
   const modalRef = useRef(null);
 

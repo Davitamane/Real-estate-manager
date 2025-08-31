@@ -5,14 +5,12 @@ import Input from "../UI/Input";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { getAgents, getCities, getRegions } from "../services/apiQuery";
 import { CiImageOn } from "react-icons/ci";
-import { useState } from "react";
 import AgentDropdown from "../UI/AgentDropdown";
 import Button from "../UI/Button";
 import { Controller, useForm } from "react-hook-form";
+import CityDropdown from "../AddListing/CityDropdown";
 
 function AddListing() {
-  const [image, setImage] = useState(null);
-
   const citiesQuery = useQuery({
     queryKey: ["cities"],
     queryFn: getCities,
@@ -31,7 +29,8 @@ function AddListing() {
     // handleSubmit,
     // formState: { errors },
     // reset,
-    // resetField,
+    handleSubmit,
+    resetField,
     watch,
     control,
   } = useForm({
@@ -51,24 +50,36 @@ function AddListing() {
     },
   });
 
-  function handleFileChange(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setImage(file);
-  }
   const region = watch("region_id");
-  console.log(region);
+  const city = watch("city_id");
+  console.log(region, city);
 
-  // console.log(agentsQuery.data);
+  const image = watch("image");
+
+  const onSubmit = (data) => {
+    const formattedData = {
+      ...data,
+    };
+    console.log(formattedData);
+  };
+
   if (citiesQuery.isLoading) return <div>Loading...</div>;
+
+  const sortedCities =
+    citiesQuery?.data.filter((city) => {
+      return city.region_id === region;
+    }) || null;
+  // console.log(sortedCities);
 
   return (
     <div className="mb-30">
       <h1 className="flex justify-center w-full text-2xl font-bold px-20 py-10">
         ლისტინგის დამატება
       </h1>
-      <div className="mx-80 flex flex-col gap-16">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="mx-80 flex flex-col gap-16"
+      >
         {/* გარიგების ტიპი */}
         <div className="flex flex-col gap-2">
           <h3 className="text-xl">გარიგების ტიპი</h3>
@@ -113,17 +124,22 @@ function AddListing() {
               />
             </Input>
             <Input text="ქალაქი">
-              <Controller
-                name="city_id"
-                control={control}
-                render={({ field }) => (
-                  <Dropdown
-                    data={citiesQuery.data}
-                    setState={field.onChange}
-                    value={field.value}
-                  />
-                )}
-              />
+              {region ? (
+                <Controller
+                  name="city_id"
+                  control={control}
+                  render={({ field }) => (
+                    <CityDropdown
+                      data={sortedCities}
+                      setState={field.onChange}
+                      value={field.value}
+                      id={region}
+                    />
+                  )}
+                />
+              ) : (
+                <div className="flex justify-between items-center border border-gray-300 rounded-md px-4 py-3 cursor-not-allowed min-h-[46px] bg-gray-100"></div>
+              )}
             </Input>
           </div>
         </div>
@@ -136,23 +152,29 @@ function AddListing() {
               <input
                 type="number"
                 className="w-full text-sm bg-white border border-gray-300 rounded-md resize-none focus:outline-none focus:border-2 px-4 py-3"
+                {...register("price")}
               />
             </Input>
             <Input text="ფართობი">
               <input
                 type="number"
                 className="w-full text-sm bg-white border border-gray-300 rounded-md resize-none focus:outline-none focus:border-2 px-4 py-3"
+                {...register("area")}
               />
             </Input>
             <Input text="საძინებლების რაოდენობა">
               <input
                 type="number"
                 className="w-full text-sm bg-white border border-gray-300 rounded-md resize-none focus:outline-none focus:border-2 px-4 py-3"
+                {...register("bedrooms")}
               />
             </Input>
           </div>
           <Input text="აღწერა">
-            <textarea className="w-full h-40 text-sm bg-white border border-gray-300 rounded-md resize-none focus:outline-none focus:border-2 p-4"></textarea>
+            <textarea
+              className="w-full h-40 text-sm bg-white border border-gray-300 rounded-md resize-none focus:outline-none focus:border-2 p-4"
+              {...register("description")}
+            />
           </Input>
 
           <Input text="ატვირთე ფოტო">
@@ -165,18 +187,18 @@ function AddListing() {
                 type="file"
                 accept="image/*"
                 className="hidden"
-                onChange={handleFileChange}
+                {...register("image")}
               />
               {image ? (
                 <div className="relative">
                   <img
-                    src={URL.createObjectURL(image)}
+                    src={URL.createObjectURL(image[0])}
                     className="w-20 h-20 mb-1 rounded-full object-cover object-center"
                   />
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      setImage(null);
+                      resetField("image");
                     }}
                     className="absolute -bottom-0.5 -right-0.5 bg-white p-1 rounded-full shadow hover:bg-gray-200 duration-200 ease-in-out"
                   >
@@ -198,7 +220,16 @@ function AddListing() {
           <h3 className="text-xl">აგენტი</h3>
           <div className="grid grid-cols-2 gap-5">
             <Input text="აირჩიე" required={false}>
-              <AgentDropdown data={agentsQuery.data} />
+              <Controller
+                name="agent_id"
+                control={control}
+                render={({ field }) => (
+                  <AgentDropdown
+                    data={agentsQuery.data}
+                    setState={field.onChange}
+                  />
+                )}
+              />
             </Input>
           </div>
         </div>
@@ -208,7 +239,7 @@ function AddListing() {
           <Button styleType="secondary">გაუქმება</Button>
           <Button>დაამატე ლისტინგი</Button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

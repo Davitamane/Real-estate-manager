@@ -1,15 +1,23 @@
 import { useState, useRef, useEffect } from "react";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
-function Dropdown({ data, def, setState}) {
+function CityDropdown({ data = [], def, setState, id }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState(
-    def !== undefined && data[def] ? data[def] : ""
-  );
-
-  // console.log(data);
-
+  const [selected, setSelected] = useState(null);
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    if (def) {
+      const found = data.find((city) => city.id === def);
+      if (found) setSelected(found);
+    }
+  }, [def, data]);
+
+  useEffect(() => {
+    // Reset when region changes
+    setSelected(null);
+    setState(null);
+  }, [id, setState]);
 
   const handleSelect = (option) => {
     setSelected(option);
@@ -17,37 +25,29 @@ function Dropdown({ data, def, setState}) {
     setState(option.id);
   };
 
-  // useEffect(() => {
-  //   setSelected(null);
-  // }, [id]);
-
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // console.log(event.target);
-
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
     <div
       ref={dropdownRef}
       className="relative w-full text-sm font-medium bg-white"
-      disabled={true}
     >
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className="flex justify-between items-center border border-gray-300 rounded-md px-4 py-3 cursor-pointer"
+        className={`flex justify-between items-center border border-gray-300 rounded-md px-4 py-3 cursor-pointer 
+          ${!data.length ? "bg-gray-100 cursor-not-allowed" : ""}`}
       >
-        <div className="flex items-center gap-2">{selected.name}</div>
+        <div className="flex items-center gap-2">
+          {selected ? selected.name : ""}
+        </div>
         {isOpen ? (
           <MdKeyboardArrowUp className="w-5 h-5" />
         ) : (
@@ -55,15 +55,15 @@ function Dropdown({ data, def, setState}) {
         )}
       </div>
 
-      {isOpen && (
+      {isOpen && data.length > 0 && (
         <div className="absolute z-10 bg-white border border-gray-300 rounded-md w-full shadow-md max-h-60 overflow-y-auto">
           {data.map((option) => (
             <div
               key={option.id}
               onClick={() => handleSelect(option)}
-              className="px-4 py-3 flex items-center gap-2 hover:bg-purple-50 cursor-pointer"
+              className="px-4 py-3 hover:bg-purple-50 cursor-pointer"
             >
-              <span>{option.name}</span>
+              {option.name}
             </div>
           ))}
         </div>
@@ -72,4 +72,4 @@ function Dropdown({ data, def, setState}) {
   );
 }
 
-export default Dropdown;
+export default CityDropdown;
