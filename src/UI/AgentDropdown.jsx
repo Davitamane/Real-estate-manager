@@ -44,7 +44,9 @@ function AgentDropdown({ data, def, setState }) {
         onClick={() => setIsOpen(!isOpen)}
         className="flex justify-between items-center border border-gray-300 rounded-md px-4 py-3 cursor-pointer"
       >
-        <div className="flex items-center gap-2">{selected.name}</div>
+        <div className="flex items-center gap-2">
+          {selected.name} {selected.surname}
+        </div>
         {isOpen ? (
           <MdKeyboardArrowUp className="w-5 h-5" />
         ) : (

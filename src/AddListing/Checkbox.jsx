@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { MdRadioButtonUnchecked, MdRadioButtonChecked } from "react-icons/md";
-  
 
-function Checkbox() {
+function Checkbox({ setState }) {
   const [selected, setSelected] = useState("");
-
 
   return (
     <div className="flex gap-10">
@@ -12,6 +10,7 @@ function Checkbox() {
         className="flex items-center gap-1"
         onClick={() => {
           setSelected("buy");
+          setState(0);
         }}
       >
         {selected === "buy" ? (
@@ -24,7 +23,10 @@ function Checkbox() {
       </button>
       <button
         className="flex items-center gap-1"
-        onClick={() => setSelected("rent")}
+        onClick={() => {
+          setSelected("rent");
+          setState(1);
+        }}
       >
         {selected === "rent" ? (
           <MdRadioButtonChecked className="size-4.5" />

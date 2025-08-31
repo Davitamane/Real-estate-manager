@@ -8,6 +8,7 @@ import { CiImageOn } from "react-icons/ci";
 import { useState } from "react";
 import AgentDropdown from "../UI/AgentDropdown";
 import Button from "../UI/Button";
+import { Controller, useForm } from "react-hook-form";
 
 function AddListing() {
   const [image, setImage] = useState(null);
@@ -25,12 +26,39 @@ function AddListing() {
     queryFn: getAgents,
   });
 
+  const {
+    register,
+    // handleSubmit,
+    // formState: { errors },
+    // reset,
+    // resetField,
+    watch,
+    control,
+  } = useForm({
+    mode: "onChange",
+    defaultValues: {
+      address: "",
+      image: "",
+      region_id: "",
+      description: "",
+      city_id: null,
+      zip_code: null,
+      price: null,
+      area: null,
+      bedrooms: null,
+      is_rental: null,
+      agent_id: null,
+    },
+  });
+
   function handleFileChange(e) {
     const file = e.target.files[0];
     if (!file) return;
 
     setImage(file);
   }
+  const region = watch("region_id");
+  console.log(region);
 
   // console.log(agentsQuery.data);
   if (citiesQuery.isLoading) return <div>Loading...</div>;
@@ -44,7 +72,13 @@ function AddListing() {
         {/* გარიგების ტიპი */}
         <div className="flex flex-col gap-2">
           <h3 className="text-xl">გარიგების ტიპი</h3>
-          <Checkbox />
+          <Controller
+            name="is_rental"
+            control={control}
+            render={({ field }) => (
+              <Checkbox setState={field.onChange} value={field.value} />
+            )}
+          />
         </div>
 
         {/* მდებარეობა */}
@@ -55,19 +89,41 @@ function AddListing() {
               <input
                 type="text"
                 className="w-full text-sm bg-white border border-gray-300 rounded-md resize-none focus:outline-none focus:border-2 px-4 py-3"
+                {...register("address")}
               />
             </Input>
             <Input text="საფოსტო ინდექსი">
               <input
                 type="number"
                 className="w-full text-sm bg-white border border-gray-300 rounded-md resize-none focus:outline-none focus:border-2 px-4 py-3"
+                {...register("zip_code")}
               />
             </Input>
             <Input text="რეგიონი">
-              <Dropdown data={regionsQuery.data} />
+              <Controller
+                name="region_id"
+                control={control}
+                render={({ field }) => (
+                  <Dropdown
+                    data={regionsQuery.data}
+                    setState={field.onChange}
+                    value={field.value}
+                  />
+                )}
+              />
             </Input>
             <Input text="ქალაქი">
-              <Dropdown data={citiesQuery.data} />
+              <Controller
+                name="city_id"
+                control={control}
+                render={({ field }) => (
+                  <Dropdown
+                    data={citiesQuery.data}
+                    setState={field.onChange}
+                    value={field.value}
+                  />
+                )}
+              />
             </Input>
           </div>
         </div>
@@ -102,10 +158,10 @@ function AddListing() {
           <Input text="ატვირთე ფოტო">
             <div
               className="w-full mx-auto border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer h-32"
-              onClick={() => document.getElementById("fileInput").click()}
+              onClick={() => document.getElementById("imageInput").click()}
             >
               <input
-                id="fileInput"
+                id="imageInput"
                 type="file"
                 accept="image/*"
                 className="hidden"

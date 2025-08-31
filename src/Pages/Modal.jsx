@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { ModalContext } from "../contexts/ModalContext";
 import Button from "../UI/Button";
@@ -6,11 +6,11 @@ import Input from "../UI/Input";
 import { CiImageOn } from "react-icons/ci";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { TbXboxX } from "react-icons/tb";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 function Modal() {
   const { isModalOpen, setIsModalOpen } = useContext(ModalContext);
-  const [image, setImage] = useState(null);
+  // const [image, setImage] = useState(null);
 
   const modalRef = useRef(null);
 
@@ -34,22 +34,21 @@ function Modal() {
     handleSubmit,
     formState: { errors },
     reset,
+    resetField,
+    watch,
   } = useForm({
+    mode: "onChange",
     defaultValues: {
       name: "",
       surname: "",
       email: "",
-      phone: null,
+      phone: "",
       avatar: "",
     },
   });
 
-  function handleFileChange(e) {
-    const file = e.target.files[0];
-    if (!file) return;
+  const image = watch("avatar");
 
-    setImage(file);
-  }
   function handleClose(e) {
     e.preventDefault();
     setIsModalOpen(false);
@@ -68,12 +67,11 @@ function Modal() {
     <div className="fixed top-0 left-0 w-full h-screen bg-black/20 flex items-center justify-center z-50 backdrop-blur-[3px]">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        // onSubmit={(e) => e.preventDefault()}
         className="flex w-3/5 justify-center flex-col gap-6 bg-white p-8 rounded-lg shadow-lg"
         ref={modalRef}
       >
         <div className="flex w-full justify-end">
-          <button onClick={() => handleClose()}>
+          <button onClick={(e) => handleClose(e)}>
             <TbXboxX className="size-8 text-gray-400" />
           </button>
         </div>
@@ -84,16 +82,13 @@ function Modal() {
           <Input text="სახელი">
             <input
               type="text"
-              className={`w-full text-sm bg-white border rounded-md resize-none px-4 py-3
-      ${errors.name ? "border-red-500 focus:border-red-500" : "border-gray-300 focus:border-gray-400"}`}
+              className={`w-full text-sm bg-white border rounded-md resize-none px-4 py-3  focus:outline-none
+      ${errors.name ? "border-red-400 focus:border-red-700 focus:border-2" : "border-gray-300 focus:border-gray-400"}`}
               {...register("name", {
                 required: "ჩაწერეთ ვალიდური ტექსტი",
-                minLength: { value: 2, message: "მინიმუმ 2 სიმბოლო" },
+                minLength: { value: 2 },
               })}
             />
-            {errors.name && (
-              <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
-            )}
           </Input>
 
           <Input text="გვარი">
@@ -112,7 +107,9 @@ function Modal() {
               className={`w-full text-sm bg-white border focus:border-gray-400 rounded-md resize-none border-gray-300 focus:outline-none px-4 py-3`}
               {...register("email", {
                 required: "ჩაწერეთ ვალიდური მეილი",
-                validate: (value) => value.endsWith("@redberry.ge"),
+                validate: (value) =>
+                  value.endsWith("@redberry.ge") ||
+                  "მეილი უნდა მთავრდებოდეს @redberry.ge-ზე",
               })}
             />
           </Input>
@@ -121,9 +118,9 @@ function Modal() {
               type="number"
               className={`w-full text-sm bg-white border focus:border-gray-400 rounded-md resize-none border-gray-300 focus:outline-none px-4 py-3`}
               {...register("phone", {
-                validate: (input) => {
-                  input[0] === 5 && input.length === 9;
-                },
+                validate: (val) =>
+                  (String(val).startsWith("5") && String(val).length === 9) ||
+                  "ნომერი უნდა იყოს 9 ციფრი და იწყებოდეს 5-ით",
               })}
             />
           </Input>
@@ -139,16 +136,23 @@ function Modal() {
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={handleFileChange}
               {...register("avatar")}
             />
             {image ? (
               <div className="relative">
-                <img
-                  src={URL.createObjectURL(image)}
-                  className="w-20 h-20 mb-1 rounded-full object-cover object-center"
-                />
-                <button className="absolute -bottom-0.5 -right-0.5 bg-white p-1 rounded-full shadow hover:bg-gray-200 duration-200 ease-in-out">
+                {image?.[0] && (
+                  <img
+                    src={URL.createObjectURL(image[0])}
+                    className="w-20 h-20 mb-1 rounded-full object-cover object-center"
+                  />
+                )}
+                <button
+                  className="absolute -bottom-0.5 -right-0.5 bg-white p-1 rounded-full shadow hover:bg-gray-200 duration-200 ease-in-out"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    resetField("avatar");
+                  }}
+                >
                   <RiDeleteBin6Line className="text-gray-400" />
                 </button>
               </div>
@@ -162,12 +166,7 @@ function Modal() {
         </Input>
 
         <div className="flex justify-end gap-4 mt-10">
-          <Button
-            styleType="secondary"
-            onClick={() => {
-              handleClose();
-            }}
-          >
+          <Button styleType="secondary" onClick={handleClose}>
             გაუქმება
           </Button>
 
