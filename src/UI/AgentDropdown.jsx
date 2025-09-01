@@ -2,8 +2,10 @@ import { useState, useRef, useEffect, useContext } from "react";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { ModalContext } from "../contexts/ModalContext";
-
-function AgentDropdown({ data, def, setState }) {
+// className={`border rounded-md p-2 ${
+//   fieldState.error ? "border-red-500" : "border-gray-300"
+// }`}
+function AgentDropdown({ data, def, setState, fieldState }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState(
     def !== undefined && data[def] ? data[def] : ""
@@ -42,7 +44,7 @@ function AgentDropdown({ data, def, setState }) {
     >
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className="flex justify-between items-center border border-gray-300 rounded-md px-4 py-3 cursor-pointer"
+        className={`flex justify-between items-center border ${fieldState.error ? "border-red-500" : "border-gray-300"} rounded-md px-4 py-3 cursor-pointer`}
       >
         <div className="flex items-center gap-2">
           {selected.name} {selected.surname}

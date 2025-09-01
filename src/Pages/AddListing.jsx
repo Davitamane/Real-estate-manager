@@ -9,6 +9,8 @@ import AgentDropdown from "../UI/AgentDropdown";
 import Button from "../UI/Button";
 import { Controller, useForm } from "react-hook-form";
 import CityDropdown from "../AddListing/CityDropdown";
+import LengthValidation from "../UI/LengthValidation";
+import WordValidation from "../UI/WordValidation";
 
 function AddListing() {
   const citiesQuery = useQuery({
@@ -24,17 +26,8 @@ function AddListing() {
     queryFn: getAgents,
   });
 
-  const {
-    register,
-    // handleSubmit,
-    // formState: { errors },
-    // reset,
-    handleSubmit,
-    resetField,
-    watch,
-    control,
-  } = useForm({
-    mode: "onChange",
+  const { register, handleSubmit, resetField, watch, control } = useForm({
+    mode: "onSubmit",
     defaultValues: {
       address: "",
       image: "",
@@ -51,8 +44,9 @@ function AddListing() {
   });
 
   const region = watch("region_id");
-  const city = watch("city_id");
-  console.log(region, city);
+  const address = watch("address");
+  const description = watch("description");
+  // console.log(address);
 
   const image = watch("image");
 
@@ -100,14 +94,20 @@ function AddListing() {
               <input
                 type="text"
                 className="w-full text-sm bg-white border border-gray-300 rounded-md resize-none focus:outline-none focus:border-2 px-4 py-3"
-                {...register("address")}
+                {...register("address", {
+                  required: "This field is required",
+                  minLength: 2,
+                })}
               />
+              <LengthValidation text={address} />
             </Input>
             <Input text="საფოსტო ინდექსი">
               <input
                 type="number"
                 className="w-full text-sm bg-white border border-gray-300 rounded-md resize-none focus:outline-none focus:border-2 px-4 py-3"
-                {...register("zip_code")}
+                {...register("zip_code", {
+                  required: "This field is required",
+                })}
               />
             </Input>
             <Input text="რეგიონი">
@@ -152,29 +152,44 @@ function AddListing() {
               <input
                 type="number"
                 className="w-full text-sm bg-white border border-gray-300 rounded-md resize-none focus:outline-none focus:border-2 px-4 py-3"
-                {...register("price")}
+                {...register("price", {
+                  required: "This field is required",
+                })}
               />
             </Input>
             <Input text="ფართობი">
               <input
                 type="number"
                 className="w-full text-sm bg-white border border-gray-300 rounded-md resize-none focus:outline-none focus:border-2 px-4 py-3"
-                {...register("area")}
+                {...register("area", {
+                  required: "This field is required",
+                })}
               />
             </Input>
             <Input text="საძინებლების რაოდენობა">
               <input
                 type="number"
                 className="w-full text-sm bg-white border border-gray-300 rounded-md resize-none focus:outline-none focus:border-2 px-4 py-3"
-                {...register("bedrooms")}
+                {...register("bedrooms", {
+                  required: "This field is required",
+                })}
               />
             </Input>
           </div>
           <Input text="აღწერა">
             <textarea
               className="w-full h-40 text-sm bg-white border border-gray-300 rounded-md resize-none focus:outline-none focus:border-2 p-4"
-              {...register("description")}
+              {...register("description", {
+                required: "This field is required",
+                validate: (value) => {
+                  if (!value) return;
+                  const words = value.trim().split(" ");
+                  if (words.length < 5) return "Must be at least 4 words";
+                  return true;
+                },
+              })}
             />
+            <WordValidation text={description} />
           </Input>
 
           <Input text="ატვირთე ფოტო">
@@ -187,7 +202,9 @@ function AddListing() {
                 type="file"
                 accept="image/*"
                 className="hidden"
-                {...register("image")}
+                {...register("image", {
+                  required: "please provide an image",
+                })}
               />
               {image ? (
                 <div className="relative">
@@ -223,10 +240,12 @@ function AddListing() {
               <Controller
                 name="agent_id"
                 control={control}
-                render={({ field }) => (
+                rules={{ required: "please select agent" }}
+                render={({ field, fieldState }) => (
                   <AgentDropdown
                     data={agentsQuery.data}
                     setState={field.onChange}
+                    fieldState={fieldState}
                   />
                 )}
               />
