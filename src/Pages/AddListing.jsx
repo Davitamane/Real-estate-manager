@@ -1,9 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Checkbox from "../AddListing/Checkbox";
 import Dropdown from "../UI/Dropdown";
 import Input from "../UI/Input";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { getAgents, getCities, getRegions } from "../services/apiQuery";
+import {
+  addRealEstate,
+  getAgents,
+  getCities,
+  getRegions,
+} from "../services/apiQuery";
 import { CiImageOn } from "react-icons/ci";
 import AgentDropdown from "../UI/AgentDropdown";
 import Button from "../UI/Button";
@@ -11,8 +16,12 @@ import { Controller, useForm } from "react-hook-form";
 import CityDropdown from "../AddListing/CityDropdown";
 import LengthValidation from "../UI/LengthValidation";
 import WordValidation from "../UI/WordValidation";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 function AddListing() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const citiesQuery = useQuery({
     queryKey: ["cities"],
     queryFn: getCities,
@@ -24,6 +33,18 @@ function AddListing() {
   const agentsQuery = useQuery({
     queryKey: ["agents"],
     queryFn: getAgents,
+  });
+  const { mutate } = useMutation({
+    mutationFn: addRealEstate,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["real-estates"] });
+      console.log("success");
+      toast.success("Real estate added successfully!");
+      navigate("/mainPage");
+    },
+    onError: (error) => {
+      console.error("Error adding real estate:", error);
+    },
   });
 
   const {
@@ -54,24 +75,21 @@ function AddListing() {
   const address = watch("address");
   const description = watch("description");
   const image = watch("image");
-  // const formValues = watch();
-
-  // useEffect(() => {
-  //   localStorage.setItem("addListingForm", JSON.stringify(formValues));
-  // }, [formValues]);
-
-  // useEffect(() => {
-  //   const savedData = localStorage.getItem("addListingForm");
-  //   if (savedData) {
-  //     reset(JSON.parse(savedData));
-  //   }
-  // }, [reset]);
 
   const onSubmit = (data) => {
     const formattedData = {
       ...data,
     };
+    const formData = new FormData();
+    for (const key in formattedData) {
+      if (key === "image") {
+        formData.append(key, formattedData[key][0]);
+      } else {
+        formData.append(key, formattedData[key]);
+      }
+    }
     console.log(formattedData);
+    mutate(formData);
   };
 
   if (citiesQuery.isLoading) return <div>Loading...</div>;
@@ -206,12 +224,12 @@ function AddListing() {
           </div>
           <Input text="აღწერა">
             <textarea
-              className={`w-full h-40 text-sm bg-white border ${errors.bedrooms ? "border-red-500" : "border-gray-300"} rounded-md resize-none focus:outline-none focus:border-2 p-4`}
+              className={`w-full h-40 text-sm bg-white border ${errors.description ? "border-red-500" : "border-gray-300"} rounded-md resize-none focus:outline-none focus:border-2 p-4`}
               {...register("description", {
                 required: "This field is required",
                 validate: (value) => {
                   if (!value) return;
-                  const words = value.trim().split(" ");
+                  const words = value.trim().split(" "); // slight bug
                   if (words.length < 5) return "Must be at least 4 words";
                   return true;
                 },
@@ -284,7 +302,7 @@ function AddListing() {
         {/* Buttons */}
         <div className="w-full flex justify-end gap-10">
           <Button styleType="secondary">გაუქმება</Button>
-          <Button>დაამატე ლისტინგი</Button>
+          <Button type="submit">დაამატე ლისტინგი</Button>
         </div>
       </form>
     </div>
@@ -292,3 +310,15 @@ function AddListing() {
 }
 
 export default AddListing;
+// const formValues = watch();
+
+// useEffect(() => {
+//   localStorage.setItem("addListingForm", JSON.stringify(formValues));
+// }, [formValues]);
+
+// useEffect(() => {
+//   const savedData = localStorage.getItem("addListingForm");
+//   if (savedData) {
+//     reset(JSON.parse(savedData));
+//   }
+// }, [reset]);

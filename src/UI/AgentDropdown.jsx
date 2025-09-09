@@ -59,11 +59,12 @@ function AgentDropdown({ data, def, setState, fieldState }) {
       {isOpen && (
         <div className="absolute z-10 bg-white border border-gray-300 rounded-md w-full shadow-md max-h-60 overflow-y-auto">
           <button
+          type="button"
             onClick={() => setIsModalOpen(true)}
             className="px-4 py-3 flex items-center gap-2 hover:bg-purple-50 cursor-pointer w-full"
           >
             <IoIosAddCircleOutline className="size-6" />
-            <span>დააამატე აგენტი</span>
+            <span>დაამატე აგენტი</span>
           </button>
           {data.map((option) => (
             <div

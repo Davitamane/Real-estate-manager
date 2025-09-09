@@ -7,7 +7,7 @@ const typeStyles = {
   black: "bg-white border rounded-md border-2",
 };
 
-function Button({ children, onClick, styleType = "primary", type }) {
+function Button({ children, onClick, styleType = "primary", type = "button" }) {
   const style = `${baseStyles} ${typeStyles[styleType]}`;
 
   return (

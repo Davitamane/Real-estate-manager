@@ -50,8 +50,8 @@ function Modal() {
 
   function handleClose(e) {
     e.preventDefault();
-    setIsModalOpen(false);
     reset();
+    setIsModalOpen(false);
   }
 
   const onSubmit = (data) => {
@@ -64,10 +64,10 @@ function Modal() {
 
   return createPortal(
     <div className="fixed top-0 left-0 w-full h-screen bg-black/20 flex items-center justify-center z-50 backdrop-blur-[3px]">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
+      <div
         className="flex w-3/5 justify-center flex-col gap-6 bg-white p-8 rounded-lg shadow-lg"
         ref={modalRef}
+        id="modalForm"
       >
         <div className="flex w-full justify-end">
           <button onClick={(e) => handleClose(e)}>
@@ -169,9 +169,16 @@ function Modal() {
             გაუქმება
           </Button>
 
-          <Button type="submit">დაამატე აგენტი</Button>
+          <Button
+            onClick={(e) => {
+              handleSubmit(onSubmit)(e);
+              e.preventDefault();
+            }}
+          >
+            დაამატე აგენტი
+          </Button>
         </div>
-      </form>
+      </div>
     </div>,
     document.body
   );

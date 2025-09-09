@@ -12,6 +12,11 @@ async function fetchDataId(link, id) {
   const response = await axios.get(`${API_URL}${link}/${id}`);
   return response.data;
 }
+
+async function postData(link, data) {
+  const response = await axios.post(`${API_URL}${link}`, data);
+  return response.data;
+}
 // getRealEstates
 
 export const getCities = () => fetchData("/cities");
@@ -19,3 +24,4 @@ export const getRegions = () => fetchData("/regions");
 export const getAgents = () => fetchData("/agents");
 export const getRealEstates = () => fetchData("/real-estates");
 export const getRealEstate = (id) => fetchDataId("/real-estates", id);
+export const addRealEstate = (data) => postData("/real-estates", data);
