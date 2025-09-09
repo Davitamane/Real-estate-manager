@@ -26,7 +26,14 @@ function AddListing() {
     queryFn: getAgents,
   });
 
-  const { register, handleSubmit, resetField, watch, control } = useForm({
+  const {
+    register,
+    handleSubmit,
+    resetField,
+    watch,
+    control,
+    formState: { errors },
+  } = useForm({
     mode: "onSubmit",
     defaultValues: {
       address: "",
@@ -46,9 +53,19 @@ function AddListing() {
   const region = watch("region_id");
   const address = watch("address");
   const description = watch("description");
-  // console.log(address);
-
   const image = watch("image");
+  // const formValues = watch();
+
+  // useEffect(() => {
+  //   localStorage.setItem("addListingForm", JSON.stringify(formValues));
+  // }, [formValues]);
+
+  // useEffect(() => {
+  //   const savedData = localStorage.getItem("addListingForm");
+  //   if (savedData) {
+  //     reset(JSON.parse(savedData));
+  //   }
+  // }, [reset]);
 
   const onSubmit = (data) => {
     const formattedData = {
@@ -76,12 +93,17 @@ function AddListing() {
       >
         {/* გარიგების ტიპი */}
         <div className="flex flex-col gap-2">
-          <h3 className="text-xl">გარიგების ტიპი</h3>
+          <h3 className={`text-xl `}>გარიგების ტიპი*</h3>
           <Controller
             name="is_rental"
             control={control}
+            rules={{ required: "this is required" }}
             render={({ field }) => (
-              <Checkbox setState={field.onChange} value={field.value} />
+              <Checkbox
+                setState={field.onChange}
+                value={field.value}
+                error={!!errors.is_rental}
+              />
             )}
           />
         </div>
@@ -93,7 +115,7 @@ function AddListing() {
             <Input text="მისამართი">
               <input
                 type="text"
-                className="w-full text-sm bg-white border border-gray-300 rounded-md resize-none focus:outline-none focus:border-2 px-4 py-3"
+                className={`w-full text-sm bg-white border ${errors.address ? "border-red-500" : "border-gray-300"} rounded-md resize-none focus:outline-none focus:border-2 px-4 py-3`}
                 {...register("address", {
                   required: "This field is required",
                   minLength: 2,
@@ -104,7 +126,7 @@ function AddListing() {
             <Input text="საფოსტო ინდექსი">
               <input
                 type="number"
-                className="w-full text-sm bg-white border border-gray-300 rounded-md resize-none focus:outline-none focus:border-2 px-4 py-3"
+                className={`w-full text-sm bg-white border ${errors.zip_code ? "border-red-500" : "border-gray-300"} rounded-md resize-none focus:outline-none focus:border-2 px-4 py-3`}
                 {...register("zip_code", {
                   required: "This field is required",
                 })}
@@ -114,11 +136,13 @@ function AddListing() {
               <Controller
                 name="region_id"
                 control={control}
+                rules={{ required: "this is required" }}
                 render={({ field }) => (
                   <Dropdown
                     data={regionsQuery.data}
                     setState={field.onChange}
                     value={field.value}
+                    error={!!errors.region_id}
                   />
                 )}
               />
@@ -128,17 +152,21 @@ function AddListing() {
                 <Controller
                   name="city_id"
                   control={control}
+                  rules={{ required: "this is required" }}
                   render={({ field }) => (
                     <CityDropdown
                       data={sortedCities}
                       setState={field.onChange}
                       value={field.value}
                       id={region}
+                      error={!!errors.city_id}
                     />
                   )}
                 />
               ) : (
-                <div className="flex justify-between items-center border border-gray-300 rounded-md px-4 py-3 cursor-not-allowed min-h-[46px] bg-gray-100"></div>
+                <div
+                  className={`flex justify-between items-center border border-gray-300 rounded-md px-4 py-3 cursor-not-allowed min-h-[46px] bg-gray-100`}
+                ></div>
               )}
             </Input>
           </div>
@@ -151,7 +179,7 @@ function AddListing() {
             <Input text="ფასი">
               <input
                 type="number"
-                className="w-full text-sm bg-white border border-gray-300 rounded-md resize-none focus:outline-none focus:border-2 px-4 py-3"
+                className={`w-full text-sm bg-white border ${errors.price ? "border-red-500" : "border-gray-300"} rounded-md resize-none focus:outline-none focus:border-2 px-4 py-3`}
                 {...register("price", {
                   required: "This field is required",
                 })}
@@ -160,7 +188,7 @@ function AddListing() {
             <Input text="ფართობი">
               <input
                 type="number"
-                className="w-full text-sm bg-white border border-gray-300 rounded-md resize-none focus:outline-none focus:border-2 px-4 py-3"
+                className={`w-full text-sm bg-white border ${errors.area ? "border-red-500" : "border-gray-300"} rounded-md resize-none focus:outline-none focus:border-2 px-4 py-3`}
                 {...register("area", {
                   required: "This field is required",
                 })}
@@ -169,7 +197,7 @@ function AddListing() {
             <Input text="საძინებლების რაოდენობა">
               <input
                 type="number"
-                className="w-full text-sm bg-white border border-gray-300 rounded-md resize-none focus:outline-none focus:border-2 px-4 py-3"
+                className={`w-full text-sm bg-white border ${errors.bedrooms ? "border-red-500" : "border-gray-300"} rounded-md resize-none focus:outline-none focus:border-2 px-4 py-3`}
                 {...register("bedrooms", {
                   required: "This field is required",
                 })}
@@ -178,7 +206,7 @@ function AddListing() {
           </div>
           <Input text="აღწერა">
             <textarea
-              className="w-full h-40 text-sm bg-white border border-gray-300 rounded-md resize-none focus:outline-none focus:border-2 p-4"
+              className={`w-full h-40 text-sm bg-white border ${errors.bedrooms ? "border-red-500" : "border-gray-300"} rounded-md resize-none focus:outline-none focus:border-2 p-4`}
               {...register("description", {
                 required: "This field is required",
                 validate: (value) => {
@@ -194,7 +222,7 @@ function AddListing() {
 
           <Input text="ატვირთე ფოტო">
             <div
-              className="w-full mx-auto border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer h-32"
+              className={`w-full mx-auto border-2 border-dashed ${errors.image ? "border-red-500" : "border-gray-300"} rounded-lg flex items-center justify-center cursor-pointer h-32`}
               onClick={() => document.getElementById("imageInput").click()}
             >
               <input

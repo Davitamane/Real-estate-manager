@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
-function CityDropdown({ data = [], def, setState, id }) {
+function CityDropdown({ data = [], def, setState, id, error = false }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState(null);
   const dropdownRef = useRef(null);
@@ -42,7 +42,7 @@ function CityDropdown({ data = [], def, setState, id }) {
     >
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex justify-between items-center border border-gray-300 rounded-md px-4 py-3 cursor-pointer 
+        className={`flex justify-between items-center border ${error ? "border-red-500" : "border-gray-300"} rounded-md px-4 py-3 cursor-pointer 
           ${!data.length ? "bg-gray-100 cursor-not-allowed" : ""}`}
       >
         <div className="flex items-center gap-2">

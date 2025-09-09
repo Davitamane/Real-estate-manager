@@ -36,7 +36,7 @@ function App() {
                 }
               />
               <Route path="AddListing" element={<AddListing />} />
-              <Route path="ListingPage" element={<ListingPage />} />
+              <Route path="ListingPage/:id" element={<ListingPage />} />
             </Route>
           </Routes>
           <Modal />

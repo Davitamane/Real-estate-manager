@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { MdRadioButtonUnchecked, MdRadioButtonChecked } from "react-icons/md";
+import React from "react";
 
-function Checkbox({ setState }) {
+function Checkbox({ setState, error }) {
   const [selected, setSelected] = useState("");
 
   return (
-    <div className="flex gap-10">
+    <div className={`flex gap-10 ${error ? "text-red-500" : ""}`}>
       <button
+        type="button"
         className="flex items-center gap-1"
         onClick={() => {
           setSelected("buy");
@@ -18,10 +20,11 @@ function Checkbox({ setState }) {
         ) : (
           <MdRadioButtonUnchecked className="size-4.5" />
         )}
-
         <p>იყიდება</p>
       </button>
+
       <button
+        type="button"
         className="flex items-center gap-1"
         onClick={() => {
           setSelected("rent");
@@ -33,11 +36,10 @@ function Checkbox({ setState }) {
         ) : (
           <MdRadioButtonUnchecked className="size-4.5" />
         )}
-
         <p>ქირავდება</p>
       </button>
     </div>
   );
 }
 
-export default Checkbox;
+export default React.memo(Checkbox);
