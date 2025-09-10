@@ -10,15 +10,18 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getRealEstate } from "../services/apiQuery";
+import { useState } from "react";
+import DeleteModal from "../ListingPage/DeleteModal";
 
 function ListingPage() {
   const { id } = useParams();
+  const [modal, setModal] = useState(false);
 
   const dataQuery = useQuery({
     queryKey: ["real-estate", id],
     queryFn: () => getRealEstate(id),
   });
-  console.log(dataQuery.data);
+  // console.log(dataQuery.data);
   const data = dataQuery.data;
   if (dataQuery.isLoading) return null;
 
@@ -94,7 +97,10 @@ function ListingPage() {
                 </div>
               </div>
             </div>
-            <button className="px-4 py-2 mt-3 border-gray-500 rounded-lg border w-fit text-xs">
+            <button
+              className="px-4 py-2 mt-3 border-gray-500 rounded-lg border w-fit text-xs text-gray-500 hover:bg-gray-500 hover:text-white transition-all duration-300"
+              onClick={() => setModal(true)}
+            >
               ლისტინგის წაშლა
             </button>
           </div>
@@ -120,6 +126,7 @@ function ListingPage() {
             <FaArrowRight className="size-5" />
           </button>
         </div>
+        <DeleteModal modal={modal} setModal={setModal} id={id} />
       </div>
     </>
   );

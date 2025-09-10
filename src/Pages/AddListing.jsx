@@ -37,7 +37,7 @@ function AddListing() {
   const { mutate } = useMutation({
     mutationFn: addRealEstate,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["real-estates"] });
+      queryClient.invalidateQueries({ queryKey: ["realEstates"] });
       console.log("success");
       toast.success("Real estate added successfully!");
       navigate("/mainPage");
@@ -81,11 +81,11 @@ function AddListing() {
       ...data,
     };
     const formData = new FormData();
-    for (const key in formattedData) {
-      if (key === "image") {
-        formData.append(key, formattedData[key][0]);
+    for (const i in formattedData) {
+      if (i === "image") {
+        formData.append(i, formattedData[i][0]);
       } else {
-        formData.append(key, formattedData[key]);
+        formData.append(i, formattedData[i]);
       }
     }
     console.log(formattedData);

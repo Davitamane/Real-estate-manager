@@ -7,6 +7,12 @@ import { CiImageOn } from "react-icons/ci";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { TbXboxX } from "react-icons/tb";
 import { useForm } from "react-hook-form";
+import MailValidation from "../UI/MailValidation";
+import NumberValidation from "../UI/NumberValidation";
+import Validation from "../UI/Validation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { addAgent } from "../services/apiQuery";
+import { toast } from "react-toastify";
 
 function Modal() {
   const { isModalOpen, setIsModalOpen } = useContext(ModalContext);
@@ -28,6 +34,22 @@ function Modal() {
     };
   }, []);
 
+  // ================== QUERY ================= //
+
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation({
+    mutationFn: addAgent,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["agents"] });
+      toast.success("Agent successfully created!");
+      reset();
+      setIsModalOpen(false);
+    },
+  });
+
+  // ========================================= //
+
   const {
     register,
     handleSubmit,
@@ -36,7 +58,6 @@ function Modal() {
     resetField,
     watch,
   } = useForm({
-    mode: "onChange",
     defaultValues: {
       name: "",
       surname: "",
@@ -58,7 +79,16 @@ function Modal() {
     const formattedData = {
       ...data,
     };
+    const formData = new FormData();
+    for (const i in formattedData) {
+      if (i === "avatar") {
+        formData.append(i, formattedData[i][0]);
+      } else {
+        formData.append(i, formattedData[i]);
+      }
+    }
     console.log(formattedData);
+    mutate(formData);
   };
   if (!isModalOpen) return null;
 
@@ -88,22 +118,26 @@ function Modal() {
                 minLength: { value: 2 },
               })}
             />
+            <Validation text={watch("name")} />
           </Input>
 
           <Input text="გვარი">
             <input
               type="text"
-              className={`w-full text-sm bg-white border focus:border-gray-400 rounded-md resize-none border-gray-300 focus:outline-none px-4 py-3`}
+              className={`w-full text-sm bg-white border rounded-md resize-none px-4 py-3  focus:outline-none
+      ${errors.surname ? "border-red-400 focus:border-red-700 focus:border-2" : "border-gray-300 focus:border-gray-400"}`}
               {...register("surname", {
                 required: "ჩაწერეთ ვალიდური ტექსტი",
                 minLength: 2,
               })}
             />
+            <Validation text={watch("surname")} />
           </Input>
           <Input text="ელ-ფოსტა">
             <input
               type="text"
-              className={`w-full text-sm bg-white border focus:border-gray-400 rounded-md resize-none border-gray-300 focus:outline-none px-4 py-3`}
+              className={`w-full text-sm bg-white border rounded-md resize-none px-4 py-3  focus:outline-none
+      ${errors.email ? "border-red-400 focus:border-red-700 focus:border-2" : "border-gray-300 focus:border-gray-400"}`}
               {...register("email", {
                 required: "ჩაწერეთ ვალიდური მეილი",
                 validate: (value) =>
@@ -111,23 +145,26 @@ function Modal() {
                   "მეილი უნდა მთავრდებოდეს @redberry.ge-ზე",
               })}
             />
+            <MailValidation text={watch("email")} />
           </Input>
           <Input text="ტელეფონის ნომერი">
             <input
               type="number"
-              className={`w-full text-sm bg-white border focus:border-gray-400 rounded-md resize-none border-gray-300 focus:outline-none px-4 py-3`}
+              className={`w-full text-sm bg-white border rounded-md resize-none px-4 py-3  focus:outline-none
+      ${errors.phone ? "border-red-400 focus:border-red-700 focus:border-2" : "border-gray-300 focus:border-gray-400"}`}
               {...register("phone", {
                 validate: (val) =>
                   (String(val).startsWith("5") && String(val).length === 9) ||
                   "ნომერი უნდა იყოს 9 ციფრი და იწყებოდეს 5-ით",
               })}
             />
+            <NumberValidation text={watch("phone")} />
           </Input>
         </div>
 
         <Input text="ატვირთე ფოტო">
           <div
-            className="w-full mx-auto  border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer h-32"
+            className={`w-full mx-auto  border-2 border-dashed ${errors.avatar ? "border-red-500" : "border-gray-300"} rounded-lg flex items-center justify-center cursor-pointer h-32`}
             onClick={() => document.getElementById("fileInput").click()}
           >
             <input
@@ -135,7 +172,9 @@ function Modal() {
               type="file"
               accept="image/*"
               className="hidden"
-              {...register("avatar")}
+              {...register("avatar", {
+                required: "photo is required",
+              })}
             />
             {image ? (
               <div className="relative">
