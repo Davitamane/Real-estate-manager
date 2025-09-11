@@ -28,7 +28,7 @@ function MainPage() {
           </Button>
         </div>
       </div>
-      {open === "region" && <FilterOptions />}
+      {open === "region" && <FilterOptions.Region />}
       {open === "priceCategory" && <FilterOptions />}
       {open === "area" && <FilterOptions />}
       {open === "bedrooms" && <FilterOptions />}

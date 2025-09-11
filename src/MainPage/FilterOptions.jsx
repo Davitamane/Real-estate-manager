@@ -1,7 +1,11 @@
 import Button from "../UI/Button";
 
 function Region() {
-  return <div>region</div>;
+  return (
+    <div className="absolute z-10 bg-white border border-main mt-2 p-5 rounded-xl w-217 shadow-md flex flex-col gap-4">
+      region
+    </div>
+  );
 }
 function Span() {
   return <div>span</div>;
@@ -12,7 +16,7 @@ function Count() {
 
 function FilterOptions() {
   return (
-    <div className="absolute z-10 bg-white border border-main mt-2 p-5 rounded-xl w-158.5 shadow-md flex flex-col gap-4">
+    <div className="absolute z-10 bg-white border border-main mt-2 p-5 rounded-xl w-217 shadow-md flex flex-col gap-4">
       <div className="flex flex-col gap-6">
         {/* {data.map((el) => (
           <FilterCard data={el} key={el.id} type={type} />
