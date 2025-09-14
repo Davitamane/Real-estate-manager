@@ -18,7 +18,7 @@ function MainPage() {
       <div className="flex justify-between">
         <Filter setOpen={setOpen} open={open} />
 
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center">
           <Link to="/AddListing">
             <Button>ლისტინგის დამატება</Button>
           </Link>
@@ -29,9 +29,9 @@ function MainPage() {
         </div>
       </div>
       {open === "region" && <FilterOptions.Region />}
-      {open === "priceCategory" && <FilterOptions />}
-      {open === "area" && <FilterOptions />}
-      {open === "bedrooms" && <FilterOptions />}
+      {open === "priceCategory" && <FilterOptions.SpanPrice />}
+      {open === "area" && <FilterOptions.SpanSize />}
+      {open === "bedrooms" && <FilterOptions.Count />}
       <FilterDisplayContainer />
       <ListContainer />
     </div>
