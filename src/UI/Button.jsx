@@ -3,8 +3,8 @@ const baseStyles =
 const typeStyles = {
   primary: "bg-main text-white rounded-xl hover:bg-orange-700",
   secondary:
-    "bg-white border border-main rounded-md border-2 text-main hover:bg-main hover:border-main hover:text-white",
-  black: "bg-white border rounded-md border-2",
+    "bg-white border border-main rounded-xl border-2 text-main hover:bg-main hover:border-main hover:text-white",
+  black: "bg-white border rounded-xl border-2",
 };
 
 function Button({

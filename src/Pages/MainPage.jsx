@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import Filter from "../MainPage/Filter";
 import { MainPageContext } from "../contexts/MainPageContext";
 import Button from "../UI/Button";
@@ -10,8 +10,14 @@ import ListContainer from "../MainPage/ListContainer";
 import { ModalContext } from "../contexts/ModalContext";
 
 function MainPage() {
-  const { open, setOpen } = useContext(MainPageContext);
+  const { open, setOpen, dispatch } = useContext(MainPageContext);
   const { setIsModalOpen } = useContext(ModalContext);
+
+  useEffect(() => {
+    // console.log("test");
+
+    return dispatch({ type: "reset" });
+  }, [open]);
 
   return (
     <div className="px-20 pt-10">

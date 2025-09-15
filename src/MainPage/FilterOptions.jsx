@@ -1,21 +1,55 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import BedroomButton from "../UI/BedroomButton";
 import Button from "../UI/Button";
 import Input from "../UI/Input";
 import SelectButton from "./SelectButton";
 import { useQuery } from "@tanstack/react-query";
-import { getRealEstates } from "../services/apiQuery";
+import { getRealEstates, getRegions } from "../services/apiQuery";
+import RegionContainer from "./RegionContainer";
+import { MainPageContext } from "../contexts/MainPageContext";
 
 function Region() {
+  const regionsQuery = useQuery({
+    queryKey: ["regions"],
+    queryFn: getRegions,
+  });
+  const { dispatch, setOpen } = useContext(MainPageContext);
+
   return (
     <div className="absolute z-10 bg-white border border-gray-300 mt-2 p-5 rounded-xl w-217 shadow-md flex flex-col gap-4">
-      region
+      <div className="flex text-md font-semibold">
+        <h1>რეგიონის მიხედვით</h1>
+      </div>
+      {regionsQuery.isFetched && (
+        <div className="grid grid-cols-3 gap-5">
+          {regionsQuery.data.map((region) => (
+            <RegionContainer data={region} key={region.id} />
+          ))}
+        </div>
+      )}
+      <div className="flex justify-end gap-3">
+        <Button
+          onClick={() => {
+            dispatch({ type: "select" });
+            setOpen("");
+          }}
+        >
+          არჩევა
+        </Button>
+      </div>
     </div>
   );
 }
 function SpanPrice() {
+  const { dispatch, setOpen, filters } = useContext(MainPageContext);
   const [minNumber, setMinNumber] = useState("");
   const [maxNumber, setMaxNumber] = useState("");
+  const prices = [minNumber, maxNumber];
+  console.log(
+    filters.final.priceRange
+    //  ? filters.final.priceRange[0] : ""
+  );
+
   const moreThan =
     minNumber !== "" &&
     maxNumber !== "" &&
@@ -27,7 +61,6 @@ function SpanPrice() {
       </div>
       <div className="flex flex-col gap-1">
         <div className="flex justify-between gap-6 relative">
-          {" "}
           <Input.Addons
             onChange={setMinNumber}
             number={minNumber}
@@ -39,6 +72,92 @@ function SpanPrice() {
             error={moreThan}
           />
         </div>
+        {moreThan && (
+          <p className="absolute mt-1 z-10 top-26 left-1- text-xs text-red-500">
+            ჩაწერეთ ვალიდური მონაცემები
+          </p>
+        )}
+      </div>
+      <div className="grid grid-cols-2 gap-y-2 gap-x-6">
+        <h1 className="flex justify-center my-2 font-semibold">მინ. ფასი</h1>
+        <h1 className="flex justify-center my-2 font-semibold">მაქს. ფასი</h1>
+        {/* 1 line */}
+        <SelectButton
+          text="50,000 ₾"
+          onClick={() => setMinNumber(50000)}
+          numberInput={minNumber}
+          number={50000}
+        />
+        <SelectButton
+          text="100,000 ₾"
+          onClick={() => setMaxNumber(100000)}
+          numberInput={maxNumber}
+          number={100000}
+        />
+        {/* 2 line */}
+        <SelectButton
+          text="100,000 ₾"
+          onClick={() => setMinNumber(100000)}
+          numberInput={minNumber}
+          number={100000}
+        />
+        <SelectButton
+          text="150,000 ₾"
+          onClick={() => setMaxNumber(150000)}
+          numberInput={maxNumber}
+          number={150000}
+        />
+        {/* 3 line */}
+        <SelectButton
+          text="150,000 ₾"
+          onClick={() => setMinNumber(150000)}
+          numberInput={minNumber}
+          number={150000}
+        />
+        <SelectButton
+          text="200,000 ₾"
+          onClick={() => setMaxNumber(200000)}
+          numberInput={maxNumber}
+          number={200000}
+        />
+        {/* 4 line */}
+        <SelectButton
+          text="200,000 ₾"
+          onClick={() => setMinNumber(200000)}
+          numberInput={minNumber}
+          number={200000}
+        />
+        <SelectButton
+          text="250,000 ₾"
+          onClick={() => setMaxNumber(250000)}
+          numberInput={maxNumber}
+          number={250000}
+        />
+        {/* 5 line */}
+        <SelectButton
+          text="250,000 ₾"
+          onClick={() => setMinNumber(250000)}
+          numberInput={minNumber}
+          number={250000}
+        />
+        <SelectButton
+          text="300,000 ₾"
+          onClick={() => setMaxNumber(300000)}
+          numberInput={maxNumber}
+          number={300000}
+        />
+      </div>
+      <div className="flex justify-end gap-3">
+        <Button
+          onClick={() => {
+            dispatch({ type: "toggle_price", payload: prices });
+            dispatch({ type: "select" });
+            setOpen("");
+          }}
+          locked={moreThan}
+        >
+          არჩევა
+        </Button>
       </div>
     </div>
   );
@@ -160,6 +279,9 @@ function SpanSize() {
   );
 }
 function Count() {
+  const [selected, setSelected] = useState("");
+  const { dispatch, setOpen } = useContext(MainPageContext);
+
   const estateQuery = useQuery({
     queryKey: ["realEstates"],
     queryFn: getRealEstates,
@@ -171,7 +293,6 @@ function Count() {
       !bedrooms.includes(estate.bedrooms) && bedrooms.push(estate.bedrooms)
     );
   });
-  console.log(bedrooms.sort());
 
   return (
     <div className="absolute ml-150 z-10 bg-white border border-gray-300 mt-2 p-5 rounded-xl shadow-md flex flex-col gap-4">
@@ -180,14 +301,19 @@ function Count() {
       </div>
       <div className="grid grid-cols-4 gap-3">
         {bedrooms.sort().map((number) => (
-          <BedroomButton number={number} key={number} />
+          <BedroomButton
+            number={number}
+            key={number}
+            setSelected={setSelected}
+            selected={selected}
+          />
         ))}
       </div>
       <div className="flex justify-end gap-3">
         <Button
           onClick={() => {
-            //   dispatch({ type: "select" });
-            //   setOpen("");
+            dispatch({ type: "select" });
+            setOpen("");
           }}
         >
           არჩევა
