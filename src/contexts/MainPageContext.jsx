@@ -29,6 +29,53 @@ function filterReducer(state, action) {
         },
       };
     }
+    case "pop_region": {
+      return {
+        ...state,
+        final: {
+          ...state.final,
+          region: state.final.region.filter((el) => el !== action.payload),
+        },
+      };
+    }
+
+    case "toggle_price": {
+      return {
+        ...state,
+        final: {
+          ...state.final,
+          priceRange: action.payload,
+        },
+      };
+    }
+    case "pop_price": {
+      return {
+        ...state,
+        final: {
+          ...state.final,
+          priceRange: [],
+        },
+      };
+    }
+
+    case "toggle_area": {
+      return {
+        ...state,
+        final: {
+          ...state.final,
+          area: action.payload,
+        },
+      };
+    }
+    case "pop_area": {
+      return {
+        ...state,
+        final: {
+          ...state.final,
+          area: [],
+        },
+      };
+    }
 
     case "toggle_bedrooms": {
       const includes = state.temp.bedrooms.includes(action.payload);
@@ -42,26 +89,12 @@ function filterReducer(state, action) {
         },
       };
     }
-
-    case "toggle_price": {
-      console.log(action.payload);
-      console.log(state.final.priceRange);
-
+    case "pop_bedrooms": {
       return {
         ...state,
         final: {
           ...state.final,
-          priceRange: action.payload,
-        },
-      };
-    }
-
-    case "toggle_area": {
-      return {
-        ...state,
-        final: {
-          ...state.final,
-          area: action.payload,
+          bedrooms: state.final.bedrooms.filter((el) => el !== action.payload),
         },
       };
     }
