@@ -42,13 +42,30 @@ function filterReducer(state, action) {
         },
       };
     }
- 
+
     case "toggle_price": {
-      console.log(action.payload[0], action.payload[1]);
+      console.log(action.payload);
+      console.log(state.final.priceRange);
+
       return {
         ...state,
+        final: {
+          ...state.final,
+          priceRange: action.payload,
+        },
       };
     }
+
+    case "toggle_area": {
+      return {
+        ...state,
+        final: {
+          ...state.final,
+          area: action.payload,
+        },
+      };
+    }
+
     case "select": {
       return {
         ...state,
@@ -59,6 +76,12 @@ function filterReducer(state, action) {
       return {
         ...state,
         temp: { ...state.final },
+      };
+    }
+    case "empty": {
+      return {
+        temp: { ...initialState.temp },
+        final: { ...initialState.final },
       };
     }
     default:

@@ -42,13 +42,13 @@ function Region() {
 }
 function SpanPrice() {
   const { dispatch, setOpen, filters } = useContext(MainPageContext);
-  const [minNumber, setMinNumber] = useState("");
-  const [maxNumber, setMaxNumber] = useState("");
-  const prices = [minNumber, maxNumber];
-  console.log(
-    filters.final.priceRange
-    //  ? filters.final.priceRange[0] : ""
+  const [minNumber, setMinNumber] = useState(
+    filters.final.priceRange ? filters.final.priceRange[0] : ""
   );
+  const [maxNumber, setMaxNumber] = useState(
+    filters.final.priceRange ? filters.final.priceRange[1] : ""
+  );
+  const prices = [+minNumber, +maxNumber];
 
   const moreThan =
     minNumber !== "" &&
@@ -151,7 +151,6 @@ function SpanPrice() {
         <Button
           onClick={() => {
             dispatch({ type: "toggle_price", payload: prices });
-            dispatch({ type: "select" });
             setOpen("");
           }}
           locked={moreThan}
@@ -163,12 +162,19 @@ function SpanPrice() {
   );
 }
 function SpanSize() {
-  const [minNumber, setMinNumber] = useState("");
-  const [maxNumber, setMaxNumber] = useState("");
+  const { dispatch, setOpen, filters } = useContext(MainPageContext);
+  const [minNumber, setMinNumber] = useState(
+    filters.final.area ? filters.final.area[0] : ""
+  );
+  const [maxNumber, setMaxNumber] = useState(
+    filters.final.area ? filters.final.area[1] : ""
+  );
   const moreThan =
     minNumber !== "" &&
     maxNumber !== "" &&
     Number(minNumber) >= Number(maxNumber);
+
+  const size = [+minNumber, +maxNumber];
 
   return (
     <div className="absolute ml-40 z-10 bg-white border border-gray-300 mt-2 p-5 rounded-xl w-116 shadow-md flex flex-col gap-5 transition-all duration-300">
@@ -267,8 +273,8 @@ function SpanSize() {
       <div className="flex justify-end gap-3">
         <Button
           onClick={() => {
-            //   dispatch({ type: "select" });
-            //   setOpen("");
+            dispatch({ type: "toggle_area", payload: size });
+            setOpen("");
           }}
           locked={moreThan}
         >
@@ -279,7 +285,6 @@ function SpanSize() {
   );
 }
 function Count() {
-  const [selected, setSelected] = useState("");
   const { dispatch, setOpen } = useContext(MainPageContext);
 
   const estateQuery = useQuery({
@@ -288,6 +293,7 @@ function Count() {
   });
 
   const bedrooms = [];
+
   estateQuery.data.map((estate) => {
     return (
       !bedrooms.includes(estate.bedrooms) && bedrooms.push(estate.bedrooms)
@@ -301,12 +307,7 @@ function Count() {
       </div>
       <div className="grid grid-cols-4 gap-3">
         {bedrooms.sort().map((number) => (
-          <BedroomButton
-            number={number}
-            key={number}
-            setSelected={setSelected}
-            selected={selected}
-          />
+          <BedroomButton number={number} key={number} />
         ))}
       </div>
       <div className="flex justify-end gap-3">
