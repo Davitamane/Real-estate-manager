@@ -14,30 +14,25 @@ function ListContainer() {
   if (estateQuery.isLoading) return null;
 
   const filteredTasks = estateQuery.data.filter((estate) => {
+    const { region, priceRange, area, bedrooms } = filters.final;
+
     const matchingRegion =
-      filters.final.region.length === 0 ||
-      filters.final.region.includes(estate.city.region.id);
+      !region.length || region.includes(estate.city.region.id);
 
+    const matchingPrice =
+      !priceRange.length ||
+      (estate.price >= priceRange[0] && estate.price <= priceRange[1]);
 
-    // console.log(filters.final.region.includes(estate.city.region.id));
+    const matchingArea =
+      !area.length ||
+      (estate.area >= area[0] && estate.area <= area[1]);
 
-    // const matchingPrice =
-    //   filters.final.priceRange === 0 ||
-    //   (estate.price > filters.final.priceRange[0] &&
-    //     estate.price < filters.final.priceRange[1]);
+    const matchingBedrooms =
+      !bedrooms.length || bedrooms.includes(estate.bedrooms);
 
-    // const matchingArea =
-    //   filters.final.area === 0 ||
-    //   (estate.area > filters.final.area[0] &&
-    //     estate.area < filters.final.area[1]);
-
-    // const matchingBedrooms =
-    //   filters.final.bedrooms.length === 0 ||
-    //   filters.final.bedrooms.includes(estate.bedrooms);
-
-    return matchingRegion;
-    // matchingArea || matchingBedrooms || matchingPrice ||
+    return matchingRegion && matchingPrice && matchingArea && matchingBedrooms;
   });
+
   // console.log(filteredTasks);
 
   return (
