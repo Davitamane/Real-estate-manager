@@ -18,6 +18,7 @@ function ListContainer() {
       filters.final.region.length === 0 ||
       filters.final.region.includes(estate.city.region.id);
 
+
     // console.log(filters.final.region.includes(estate.city.region.id));
 
     // const matchingPrice =
@@ -37,7 +38,7 @@ function ListContainer() {
     return matchingRegion;
     // matchingArea || matchingBedrooms || matchingPrice ||
   });
-  console.log(filteredTasks);
+  // console.log(filteredTasks);
 
   return (
     <div className="w-full grid my-10 gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
