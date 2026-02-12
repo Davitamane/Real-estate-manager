@@ -1,6 +1,6 @@
 <div style="display:flex; align-items: center">
 
-<h1 style="position:relative; top: -6px" >Quiz wiz backend</h1>
+<h1 style="position:relative; top: -6px" >Quiz wiz</h1>
 
 </div>
 
