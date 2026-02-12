@@ -151,17 +151,9 @@ npm run build
 7\. Reload services (nginx / php-fpm):
 
 ```sh
-
-
-
 sudo systemctl reload nginx
 
-
-
 sudo systemctl restart php8.x-fpm
-
-
-
 ```
 
 #
