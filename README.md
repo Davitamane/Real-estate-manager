@@ -139,13 +139,9 @@ git pull origin main
 3\. Build production assets:
 
 ```sh
-
 npm install
 
-
-
 npm run build
-
 ```
 
 7\. Reload services (nginx / php-fpm):
