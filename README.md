@@ -1,169 +1,180 @@
-<div style="display:flex; align-items: center">
+The Movie Quotes Backend powers the Movie Quotes application by providing a REST API for managing movies, quotes, interactions, and user activity.
 
-<h1 style="position:relative; top: -6px" >Quiz wiz</h1>
+The system allows users to create movies and attach quotes to them, interact with quotes through likes and comments, and receive real-time notifications when other users engage with their content.
 
-</div>
+The backend is built with Laravel and exposes an API consumed by a Next.js frontend SPA authenticated via Laravel Sanctum.
+Real-time updates are handled using Laravel Broadcasting with Pusher and Laravel Echo.
 
----
+Table of Contents
 
-**Quiz Wiz** is a quiz platform that allows users to browse and complete quizzes across different categories in a fast and intuitive interface.
+Prerequisites
 
-The application provides a smooth quiz-taking experience with category filtering, dynamic question rendering, and real-time interaction. Users can select quizzes based on their interests, answer multiple-choice questions, and receive immediate feedback on their performance.
+Tech Stack
 
-#
+Getting Started
 
-### Table of Contents
+Running Tests
 
-- [Prerequisites](#prerequisites)
+Development
 
-- [Tech Stack](#tech-stack)
+Deployment
 
-- [Getting Started](#getting-started)
+Resources
 
-- [Deployment](#deployment)
+Developer Notes
 
-- [Resources](#resources)
+Prerequisites
 
-- [Developer Notes / Special Logic](#developer-notes--special-logic)
+Tech Stack
+Backend
 
-#
+Laravel 12.x
 
-### Prerequisites
+PHP ≥ 8.4
 
-![React](https://img.shields.io/badge/React-19+-blue)
+MySQL 8.x
 
-![TypeScript](https://img.shields.io/badge/TypeScript-5+-3178C6)
+Authentication
 
-![React Router DOM](https://img.shields.io/badge/React%20Router%20DOM-7+-CA4245)
+Laravel Sanctum – SPA authentication
 
-![React Hook Form](https://img.shields.io/badge/React%20Hook%20Form-7+-EC5990)
+Real-Time Features
 
-![React Toastify](https://img.shields.io/badge/React%20Toastify-11+-FF7F50)
+Laravel Broadcasting
 
-![TanStack Query](https://img.shields.io/badge/TanStack%20Query-5+-FF4154)
+Pusher
 
-### Tech Stack
+Laravel Echo
 
-#### Frontend
+Used for:
 
-- **React** 19.x
+real-time notifications
 
-- **TypeScript**
+live updates for comments and likes
 
-- **Vite** (Build tool)
+Query Handling
 
-- **Node.js** >= 24
+Spatie Query Builder – filtering and searching
 
-#### Other
+Spatie Media Library – profile image management
 
-- **React Router DOM** - Application routing
+Frontend (separate project)
 
-- **React Hook Form** - Input validation
+Next.js SPA
 
-- **TanStack Query** - Data fetching/handling
+Application Features
+Movie Management
 
-- **React Toastify** - application notifications
+Users can perform CRUD operations on movies:
 
-- **Framer Motion** - Animations & transitions
+create movies
 
-#
+update movie details
 
-### Getting Started
+delete movies
 
-1\. First of all make sure you have the following installed:
+view their movie collection
 
-```sh
+Quote Management
 
-node -v
+Quotes are always attached to a movie.
 
-npm -v
+Users can:
 
-```
+create quotes for movies
 
-2\. After that you need to clone Quiz wiz repository from github:
+edit or delete their quotes
 
-```sh
+browse quotes from all users
 
-git clone https://github.com/RedberryInternship/dato-khizanishvili-quiz-wiz-front
+Interactions
 
-```
+Users can interact with quotes by:
 
-3\. after you have gone into the application folder, it's time to install all the JS dependencies:
+liking quotes
 
-```sh
+commenting on quotes
 
-npm install
+Real-Time Notifications
 
-```
+When someone:
 
-4\. After setting up the .env file execute this in the root of your project :
+likes your quote
 
-```sh
+comments on your quote
 
-npm run dev
+a notification is instantly delivered through Laravel Broadcasting.
 
-```
+These updates are pushed to the frontend using Pusher and Laravel Echo.
 
-#
+Getting Started
 
-### Build for Production
+1. Clone the repository
+   git clone https://github.com/RedberryInternship/dato-khizanishvili-movie-quotes-back
+2. Install PHP dependencies
+   composer install
+3. Install JavaScript dependencies
+   npm install
+4. Create environment file
+   cp .env.example .env
 
-To generate optimized production files:
+Then configure your database credentials inside .env.
 
-```sh
+MySQL configuration
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=**_
+DB_USERNAME=_**
+DB_PASSWORD=\*\*\* 5. Run database migrations
+php artisan migrate 6. Create storage link
+php artisan storage:link
 
-npm run build
+This is required for user profile images managed through Laravel storage.
 
-```
+Running Unit Tests
 
-#
+You can run all tests using:
 
-### Deployment
+composer test
+Development
 
-1\. SSH into your server:
+To start Laravel's development server run:
 
-```sh
+php artisan serve
 
-ssh user@server
+The API will then be available at:
 
-```
+http://localhost:8000
+Deployment
 
-2\. Pull the latest changes:
+1. Connect to your server
+   ssh user@server
+2. Pull latest changes
+   git pull origin main
+3. Install dependencies
+   composer install
+4. Run migrations
+   php artisan migrate
+5. Build production assets
+   npm install
+   npm run build
+6. Optimize application
+   php artisan optimize
+7. Restart services
+   sudo systemctl reload nginx
+   sudo systemctl restart php8.x-fpm
+   Resources
+   Database Diagram
 
-```sh
+DrawSQL diagram:
 
-git pull origin main
+https://drawsql.app/teams/davitamane/diagrams/moviequotes
+Production API
+https://movie-quotes-api.example.com
+Developer Notes
+CORS Configuration
 
-```
+Make sure to update the frontend origin inside config/cors.php:
 
-3\. Build production assets:
-
-```sh
-npm install
-
-npm run build
-```
-
-7\. Reload services (nginx / php-fpm):
-
-```sh
-sudo systemctl reload nginx
-
-sudo systemctl restart php8.x-fpm
-```
-
-#
-
-### Resources
-
-- **Database Diagram (DrawSQL):**
-
-https://drawsql.app/teams/davitamane/diagrams/quizwiz
-
-- **Production URL:**
-
-https://quiz-wiz.dato-khizanishvili.redberryinternship.ge/
-
-### Developer Notes / Special Logic
-
-> No additional comments
+'allowed_origins' => ['http://your-frontend-url.com'],
